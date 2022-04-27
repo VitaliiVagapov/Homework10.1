@@ -1,15 +1,32 @@
 from flask import Flask
 
-app = flask(__Name__)
+from utils import get_candidates, format_candidates, get_candidates_id, get_candidates_skill
+
+app = Flask(__name__)
 
 @app.route('/')
 def main():
-    pass
+    candidates_list = get_candidates('candidates.json')
 
-@app.route('/candidates/<candidate_id>')
-def candidate(candidate_id):
-    pass
+    return format_candidates(candidates_list)
+
+@app.route('/candidates/<int:candidate_id>')
+def page_candidate(candidate_id):
+    candidates_list = get_candidates('candidates.json')
+
+    candidate = get_candidates_id(candidates_list, candidate_id)
+
+    result = f'<img src="{candidate["picture"]}">'
+
+    return result + format_candidates([candidate])
+
+
 
 @app.route('/skills/<skill>')
 def skills(skill):
-    pass
+    candidates_list = get_candidates('candidates.json')
+
+    return format_candidates(get_candidates_skill(candidates_list, skill))
+
+
+app.run()
